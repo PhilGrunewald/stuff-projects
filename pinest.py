@@ -83,9 +83,9 @@ while True:
         print "Target temp"
         print read_gmail()
         if (read_gmail() > read_temp()):#Compare varSubject to temp
-            wiringpi.digitalWrite(0, 1) # sets port 0 to 1 (3.3V, on)
+            wiringpi.digitalWrite(0, 0) # sets port 0 to 0 (3.3V, off) inverted from original - this is how my boiler works.
             print "HEATING ON\n"
         else:
-            wiringpi.digitalWrite(0, 0) # sets port 0 to 0 (3.3V, off)
+            wiringpi.digitalWrite(0, 1) # sets port 0 to 1 (3.3V, on)
             print "HEATING OFF\n"
         time.sleep(5)
