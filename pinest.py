@@ -41,7 +41,7 @@ def read_temp():
 def read_gmail():
     global varSubject
     mail = imaplib.IMAP4_SSL('imap.gmail.com')
-    mail.login('YOUREMAILADDRESS@gmail.com','YOUR PASSWORD HERE')
+    mail.login('24stleonards@gmail.com','XXX')
     mail.select('inbox')
     mail.list()
 
@@ -78,11 +78,15 @@ def read_gmail():
     return int(varSubject)
 
 while True:
-        print "Current temp"
+        print "Max room"
         print read_temp()
-        print "Target temp"
-        print read_gmail()
-        if (read_gmail() > read_temp()):#Compare varSubject to temp
+        print "Set temp"
+        try:
+            set_temp = read_gmail()
+        except:
+            set_temp = 19
+        print set_temp
+        if (set_temp  > read_temp()):#Compare varSubject to temp
             wiringpi.digitalWrite(0, 0) # sets port 0 to 0 (3.3V, off) inverted from original - this is how my boiler works.
             print "HEATING ON\n"
         else:
