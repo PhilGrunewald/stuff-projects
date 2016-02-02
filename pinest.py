@@ -5,6 +5,7 @@ import time
 #imports for gmail reading
 import imaplib
 import email
+from db_phil import *     # reads the database and gmail information from db_phil.py
 
 # wiringpi numbers  
 import wiringpi2 as wiringpi
@@ -18,6 +19,16 @@ os.system('modprobe w1-therm')
 base_dir = '/sys/bus/w1/devices/'
 device_folder = glob.glob(base_dir + '28*')[0]
 device_file = device_folder + '/w1_slave'
+
+dbConnection = MySQLdb.connect(host=dbHost, user=dbUser, passwd= dbPass, db=dbName)
+
+def updateDatabase(setTemperature, room1Temperature)
+    sqlq = "INSERT INTO temperature(setPoint, room1) \
+            VALUES ('" + setTemperature + "', '" + room1Temperature + "');"
+    cursor = dbConnection.cursor()
+    cursor.execute(sqlq)
+    dbConnection.commit()
+    cursor.close()
 
 def read_temp_raw():
     f = open(device_file, 'r')
@@ -41,7 +52,7 @@ def read_temp():
 def read_gmail():
     global varSubject
     mail = imaplib.IMAP4_SSL('imap.gmail.com')
-    mail.login('24stleonards@gmail.com','XXX')
+    mail.login(gmailName, gmailPass)
     mail.select('inbox')
     mail.list()
 
@@ -78,15 +89,17 @@ def read_gmail():
     return int(varSubject)
 
 while True:
+        room1_temp =reand_temp()
         print "Max room"
-        print read_temp()
-        print "Set temp"
+        print room1_temp
         try:
             set_temp = read_gmail()
         except:
             set_temp = 19
+        print "Set temp"
         print set_temp
-        if (set_temp  > read_temp()):#Compare varSubject to temp
+        updateDatabase(set_temp, room1_temp)
+        if (set_temp  > room1_temp):#Compare varSubject to temp
             wiringpi.digitalWrite(0, 0) # sets port 0 to 0 (3.3V, off) inverted from original - this is how my boiler works.
             print "HEATING ON\n"
         else:
