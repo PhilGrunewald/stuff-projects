@@ -22,7 +22,7 @@ device_file = device_folder + '/w1_slave'
 
 dbConnection = MySQLdb.connect(host=dbHost, user=dbUser, passwd= dbPass, db=dbName)
 
-def updateDatabase(setTemperature, room1Temperature)
+def updateDatabase(setTemperature, room1Temperature):
     sqlq = "INSERT INTO temperature(setPoint, room1) \
             VALUES ('" + setTemperature + "', '" + room1Temperature + "');"
     cursor = dbConnection.cursor()
