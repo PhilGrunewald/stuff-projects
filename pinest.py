@@ -6,6 +6,7 @@ import time
 import imaplib
 import email
 from db_phil import *     # reads the database and gmail information from db_phil.py
+import MySQLdb
 
 # wiringpi numbers  
 import wiringpi2 as wiringpi
@@ -88,21 +89,29 @@ def read_gmail():
 
     return int(varSubject)
 
+loopi = 0
 while True:
+        loopi += 1
         room1_temp =reand_temp()
         print "Max room"
         print room1_temp
         try:
             set_temp = read_gmail()
         except:
-            set_temp = 19
+            set_temp = 19.1
         print "Set temp"
         print set_temp
-        updateDatabase(set_temp, room1_temp)
+        if (loopi > 6):
+            loopi = 0
+            try:
+                updateDatabase(set_temp, room1_temp)
+            except:
+                pass
         if (set_temp  > room1_temp):#Compare varSubject to temp
             wiringpi.digitalWrite(0, 0) # sets port 0 to 0 (3.3V, off) inverted from original - this is how my boiler works.
             print "HEATING ON\n"
-        else:
+        # Allow for a 1 degree window
+        elif (room1_temp > set_temp + 1):
             wiringpi.digitalWrite(0, 1) # sets port 0 to 1 (3.3V, on)
             print "HEATING OFF\n"
         time.sleep(5)
