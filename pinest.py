@@ -92,7 +92,7 @@ def read_gmail():
 loopi = 0
 while True:
         loopi += 1
-        room1_temp =reand_temp()
+        room1_temp =read_temp()
         print "Max room"
         print room1_temp
         try:
@@ -104,7 +104,7 @@ while True:
         if (loopi > 6):
             loopi = 0
             try:
-                updateDatabase(set_temp, room1_temp)
+                updateDatabase(str(set_temp), str(room1_temp))
             except:
                 pass
         if (set_temp  > room1_temp):#Compare varSubject to temp
