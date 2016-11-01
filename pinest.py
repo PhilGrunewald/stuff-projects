@@ -2,6 +2,7 @@
 import os
 import glob
 import time
+import datetime
 #imports for gmail reading
 import imaplib
 import email
@@ -23,8 +24,12 @@ device_file = device_folder + '/w1_slave'
 
 dbConnection = MySQLdb.connect(host=dbHost, user=dbUser, passwd= dbPass, db=dbName)
 
+def reconnect():
+    dbConnection = MySQLdb.connect(host=dbHost, user=dbUser, passwd= dbPass, db=dbName)
+
 def selectTemperture():
-    sqlq = "SELECT temp FROM targetTemperature"
+    nowTime = datetime.datetime.now().strftime('%H:%M:%S')
+    sqlq = "SELECT temp FROM setTemp WHERE startTime < '%s' ORDER BY startTime DESC LIMIT 1;" % nowTime
     cursor = dbConnection.cursor()
     cursor.execute(sqlq)
     targetTemp = ("%s" % cursor.fetchone())
@@ -67,6 +72,7 @@ while True:
             set_temp = selectTemperture()
         except:
             set_temp = 19.1
+            reconnect()
         print "Set temp"
         print set_temp
         if (loopi > 6):
