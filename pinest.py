@@ -27,7 +27,7 @@ def selectTemperture():
     sqlq = "SELECT temp FROM targetTemperature"
     cursor = dbConnection.cursor()
     cursor.execute(sqlq)
-    targetTemp = cursor.fetchone()
+    targetTemp = ("%s" % cursor.fetchone())
     cursor.close()
     return float(targetTemp)
 
